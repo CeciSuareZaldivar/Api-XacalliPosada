@@ -2,7 +2,7 @@
 
 | No | Nombre Repositorio | Descripción | Link | Código QR |
 | ---------- | ---------- | ---------- | ---------- | ---------- |
-| 1 | Api Xacalli Posada |  | [Repositorio](https://bit.ly/RepoApiXacalliPosada) | [![Api Xacalli](./img/api_xacalli_posada.png){ width=100px }](https://bit.ly/RepoApiXacalliPosada) |
+| 1 | Api Xacalli Posada |  | [Repositorio](https://bit.ly/RepoApiXacalliPosada) | [![Api Xacalli](./img/api_xacalli_posada.png)](https://bit.ly/RepoApiXacalliPosada) |
 | 2 | Aplicación Web Xacalli Posada (CRM) | Gestionar las reservaciones del hotel | [Repositorio](https://bit.ly/CrmXacalliPosada) | [![App Web Xacalli](./img/app_web_xacalli_posada.png)](https://bit.ly/CrmXacalliPosada) |
 | 3 | Landing Xacalli Posada | Página de aterrizaje para posicionamiento del hotel y conversión de leads | [Repositorio](https://bit.ly/RepoLandingXacalliPosada) | [![Landing Xacalli](./img/landing_xacalli_posada.png)](https://bit.ly/RepoLandingXacalliPosada) |
 
