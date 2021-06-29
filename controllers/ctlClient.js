@@ -6,7 +6,7 @@ const Op = db.Sequelize.Op;
 //################  NUEVO CLIENTE #################
 //Servicio para crear un nuevo registro en la base.
 //POST: http://localhost:3000/client/
-exports.newClient = (req, res,next) => {
+exports.nuevoClient = (req, res,next) => {
 	const Cli = client.build(req.body);
 	Cli.save().then(cli => {
 		return res.status(201).json(cli)
@@ -18,7 +18,7 @@ exports.newClient = (req, res,next) => {
 //################  OBTIENE CLIENTE ###############
 //Consulta de todos los registros.
 // GET : http://localhost:3000/client/
-exports.getClients = (req, res) => {
+exports.obtenerClientes = (req, res) => {
 	client.findAll().then(clien => {
 		res.json(clien);
 	}).catch(error => {
@@ -29,8 +29,8 @@ exports.getClients = (req, res) => {
 //################  OBTIENE CLIENTE ###############
 //Consulta por id.
 // GET : http://localhost:3000/client/e001
-exports.getClient = (req, res) => {	
-	const id = req.params.id_cliente;
+exports.obtenerCliente = (req, res) => {	
+	const id = req.params.id_epo;
 	client.findByPk(id).then(client => {
 		if(client===null){
 			return res.json("El id de cliente no existe");
@@ -44,17 +44,20 @@ exports.getClient = (req, res) => {
 //##################################################
 //################  ACTUALIZA CLIENTE #############
 // PUT : http://localhost:3000/client/e001
-exports.updateClient = (req, res, next) => {
-	const id = req.params.id_cliente;
-	client.update({   id_cliente   : req.body.id_cliente, 
-					  id_lead      : req.body.id_lead, 
-					  nombre       : req.body.nombre, 
-					  apellido     : req.body.apellido, 
-					  telefono     : req.body.telefono, 
-					  email        : req.body.email, 
-					  nacionalidad : req.body.nacionalidad, 
-					  visitas      : req.body.visitas }, {
-			where: { id_cliente: id }
+exports.actualizarCliente = (req, res, next) => {
+	const id = req.params.id_epo;
+	client.update({   id_cte      : req.body.id_cte, 
+					  nombre      : req.body.nombre, 
+					  apellido    : req.body.apellido, 
+					  telefono    : req.body.telefono, 
+					  no_personas : req.body.no_personas, 
+					  no_mascotas : req.body.no_mascotas, 
+					  nacionalidad: req.body.nacionalidad,
+					  email       : req.body.email, 
+					  facebook    : req.body.facebook, 
+					  epo_id_epo  : req.body.epo_id_epo, 
+					  age         : req.body.age }, {
+			where: { id_cte: id }
 	}).then(num => {
 		if (num == 1) {
 			res.send({
@@ -75,14 +78,14 @@ exports.updateClient = (req, res, next) => {
 //################  ELIMINA CLIENTE ###############
 //Servicio para eliminar un registro.
 // DELETE : http://localhost:3000/client/e0117
-exports.deleteClient = (req, res) => {
-	const id = req.params.id_cliente;
+exports.eliminarCliente = (req, res) => {
+	const id = req.params.id_epo;
 	if(id === null){
 		return res.json("Mando un campo nulo");
 	}
 	client.findByPk(id).then(client => {
 		client.destroy({
-			where: { id_cliente: id }
+			where: { id_cte: id }
 		}).then(() => {
 			res.status(200).json('Se elimino satisfactoriamente el cliente con Id ' + id);
 		});
@@ -93,7 +96,7 @@ exports.deleteClient = (req, res) => {
 
 //######### BUSCAR CON LIMIT ###############
 // GET : http://localhost:3000/client/limit/1
-exports.getClientsLimit = (req, res) => {
+exports.obtenerClientesLimit = (req, res) => {
 	const param = req.params.val;
 	const valorparam = parseInt(param,10);
 	if(valorparam === 0){
@@ -112,19 +115,21 @@ exports.getClientsLimit = (req, res) => {
 // nombre. Y esto debe funcionar en general para todos los campos de la base.
 //--------------Falta hacer para los demas cmapos---------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------
-exports.findAMatch = (req, res) => {
-	const word = req.params.word;
+exports.buscarCoincidencia = (req, res) => {
+	const palabra = req.params.palabra;
 
 	client.findAll({ where:{
 			[Op.or]: [
-				{ id_cliente:  { [Op.like]: `%${word}%` } },
-				{ id_lead:     { [Op.like]: `%${word}%` } },
-				{ nombre:      { [Op.like]: `%${word}%` } },
-				{ apellido:    { [Op.like]: `%${word}%` } },
-				{ telefono:    { [Op.like]: `%${word}%` } },
-				{ email:       { [Op.like]: `%${word}%` } },
-				{ nacionalidad:{ [Op.like]: `%${word}%` } },
-				{ visitas:     { [Op.like]: `%${word}%` } }
+				{ id_cte:      { [Op.like]: `%${palabra}%` } },
+				{ nombre:      { [Op.like]: `%${palabra}%` } },
+				{ apellido:    { [Op.like]: `%${palabra}%` } },
+				{ telefono:    { [Op.like]: `%${palabra}%` } },
+				{ no_personas: { [Op.like]: `%${palabra}%` } },
+				{ no_mascotas: { [Op.like]: `%${palabra}%` } },
+				{ nacionalidad:{ [Op.like]: `%${palabra}%` } },
+				{ email:       { [Op.like]: `%${palabra}%` } },
+				{ facebook:    { [Op.like]: `%${palabra}%` } },
+				{ epo_id_epo:  { [Op.like]: `%${palabra}%` } }
 			]
 		}
 	})
@@ -142,7 +147,7 @@ exports.findAMatch = (req, res) => {
 // Servicio de consulta por campos, es decir, un servicio que solo regrese los campos
 // que se piden por el usuario.
 
-exports.searchByAttribute = (req, res) => {
+exports.buscarPorAtributo = (req, res) => {
 	const val = req.body.valores;
 	console.log(val)
 

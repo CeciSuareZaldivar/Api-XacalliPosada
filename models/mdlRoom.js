@@ -2,21 +2,22 @@ module.exports = (sequelize, DataTypes) => {
 	const  Sequelize  = require('sequelize');
 	
 	const Room = sequelize.define('Room',{
-	id_cabana:{
+	id_hbn:{
 		type: DataTypes.UUID,
   		defaultValue: Sequelize.UUIDV4,
 		allowNull: false,
       	unique: true,
 		primaryKey : true
 	},
-    cupo:{
-	    type       : DataTypes.INTEGER,
-		allowNull  : false
-	},
-	precio:{
+	costo:{
 		type       : DataTypes.INTEGER,
 		allowNull  : false
 	},
-},{tableName : 'cabanas',timestamps: false});
+	cupo:{
+	    type       : DataTypes.INTEGER,
+		allowNull  : false
+	},
+	disponibilidad : DataTypes.INTEGER
+},{tableName : 'habitacion',timestamps: false});
 	return Room;
 }

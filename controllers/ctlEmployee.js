@@ -2,11 +2,10 @@ const db = require('../config/dbConexion.js');
 const employee = db.Employee;
 const Op = db.Sequelize.Op;
 
-
 //################  NUEVO EMPLEADO #################
 //Servicio para crear un nuevo registro en la base.
 //POST: http://localhost:3000/employee/
-exports.newEmployee = (req, res,next) => {
+exports.nuevoEmpleado = (req, res,next) => {
 	const Emp = employee.build(req.body);
 	Emp.save().then(emp => {
 		return res.status(201).json(emp)
@@ -15,12 +14,12 @@ exports.newEmployee = (req, res,next) => {
 	});
 };
 
-//################  OBTIENE EMPLEADO ###############
+//################  OBTIENE EMPLEADOS ###############
 //Consulta de todos los registros.
 // GET : http://localhost:3000/employee/
-exports.getEmployees = (req, res) => {
-	employee.findAll().then(empen => {
-		res.json(empen);
+exports.obtenerEmpleados = (req, res) => {
+	employee.findAll().then(employee => {
+		res.json(employee);
 	}).catch(error => {
 		return res.sendStatus(401)
 	})
@@ -29,8 +28,8 @@ exports.getEmployees = (req, res) => {
 //################  OBTIENE EMPLEADO ###############
 //Consulta por id.
 // GET : http://localhost:3000/employee/e001
-exports.getEmployee = (req, res) => {	
-	const id = req.params.id_empleado;
+exports.obtenerEmpleado = (req, res) => {	
+	const id = req.params.id_epo;
 	employee.findByPk(id).then(employee => {
 		if(employee===null){
 			return res.json("El id de empleado no existe");
@@ -44,18 +43,17 @@ exports.getEmployee = (req, res) => {
 //##################################################
 //################  ACTUALIZA EMPLEADO #############
 // PUT : http://localhost:3000/employee/e001
-exports.updateEmployee = (req, res, next) => {
-	const id = req.params.id_empleado;
-	employee.update({ id_empleado  : req.body.id_empleado, 
-					  nombre       : req.body.nombre, 
-					  apellido     : req.body.apellido, 
-					  telefono     : req.body.telefono, 
-					  email        : req.body.email, 
-                      rol          : req.body.rol, 
-                      estado       : req.body.estado, 
-                      nota         : req.body.nota, 
-                      sueldo       : req.body.sueldo}, {
-			where: { id_empleado: id }
+exports.actualizarEmpleado = (req, res, next) => {
+	const id = req.params.id_epo;
+	employee.update({ id_epo    : req.body.id_epo, 
+					  nombre    : req.body.nombre, 
+					  apellido  : req.body.apellido, 
+					  salario   : req.body.salario, 
+					  telefono  : req.body.telefono, 
+					  comision  : req.body.comision, 
+					  edo_id_edo: req.body.edo_id_edo, 
+					  age       : req.body.age }, {
+			where: { id_epo: id }
 	}).then(num => {
 		if (num == 1) {
 			res.send({
@@ -68,7 +66,7 @@ exports.updateEmployee = (req, res, next) => {
 		}
 	}).catch(err => {
 		res.status(500).send({
-			message: "Error al tratar de actualizar con Id=" + id
+			message: "Error al tratar de actualizar con id=" + id
 		});
 	});
 };
@@ -76,14 +74,14 @@ exports.updateEmployee = (req, res, next) => {
 //################  ELIMINA EMPLEADO ###############
 //Servicio para eliminar un registro.
 // DELETE : http://localhost:3000/employee/e0117
-exports.deleteEmployee = (req, res) => {
-	const id = req.params.id_empleado;
+exports.eliminarEmpleado = (req, res) => {
+	const id = req.params.id_epo;
 	if(id === null){
 		return res.json("Mando un campo nulo");
 	}
 	employee.findByPk(id).then(employee => {
 		employee.destroy({
-			where: { id_empleado: id }
+			where: { id_epo: id }
 		}).then(() => {
 			res.status(200).json('Se elimino satisfactoriamente el empleado con Id ' + id);
 		});
@@ -94,7 +92,7 @@ exports.deleteEmployee = (req, res) => {
 
 //######### BUSCAR CON LIMIT ###############
 // GET : http://localhost:3000/employee/limit/1
-exports.getEmployeesLimit = (req, res) => {
+exports.obtenerEmpleadosLimit = (req, res) => {
 	const param = req.params.val;
 	const valorparam = parseInt(param,10);
 	if(valorparam === 0){
@@ -103,8 +101,28 @@ exports.getEmployeesLimit = (req, res) => {
 		employee.findAll({limit: valorparam}).then(employee => {
 			res.json(employee);
 		}).catch(error => {
-			return res.sendStatus(401)
+			return res.json("El empleado no existe")
 		})
+	};
+};
+
+
+// Servicio de consulta de todos los registros, limitado a un número determinado por
+// el cliente.
+
+exports.obtenerEmpleadosLimit = (req, res) => {
+	const val = req.params.val;
+	const a = parseInt(val,10);
+
+	if(a === 0){
+		return res.json("El valor ingresado no es valido");
+	}else{
+		employee.findAll({limit: a}).then(employee => {
+			res.json(employee);
+		}).catch(error => {
+			return res.sendStatus(401)
+		});
+		
 	}
 };
 
@@ -113,19 +131,17 @@ exports.getEmployeesLimit = (req, res) => {
 // nombre. Y esto debe funcionar en general para todos los campos de la base.
 //--------------Falta hacer para los demas cmapos---------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------
-exports.findAMatch = (req, res) => {
-	const word = req.params.word;
+exports.buscarCoincidencia = (req, res) => {
+	const palabra = req.params.palabra;
 
 	employee.findAll({ where:{
 			[Op.or]: [
-				{ id_empleado: { [Op.like]: `%${word}%` } },
-				{ id_lead:     { [Op.like]: `%${word}%` } },
-				{ nombre:      { [Op.like]: `%${word}%` } },
-				{ apellido:    { [Op.like]: `%${word}%` } },
-				{ telefono:    { [Op.like]: `%${word}%` } },
-				{ email:       { [Op.like]: `%${word}%` } },
-				{ nacionalidad:{ [Op.like]: `%${word}%` } },
-				{ visitas:     { [Op.like]: `%${word}%` } }
+				{ id_epo:   { [Op.like]: `%${palabra}%` } },
+				{ nombre:   { [Op.like]: `%${palabra}%` } },
+				{ apellido: { [Op.like]: `%${palabra}%` } },
+				{ salario:  { [Op.like]: `%${palabra}%` } },
+				{ telefono: { [Op.like]: `%${palabra}%` } },
+				{ comision: { [Op.like]: `%${palabra}%` } }
 			]
 		}
 	})
@@ -143,7 +159,7 @@ exports.findAMatch = (req, res) => {
 // Servicio de consulta por campos, es decir, un servicio que solo regrese los campos
 // que se piden por el usuario.
 
-exports.searchByAttribute = (req, res) => {
+exports.buscarPorAtributo = (req, res) => {
 	const val = req.body.valores;
 	console.log(val)
 
@@ -155,3 +171,4 @@ exports.searchByAttribute = (req, res) => {
 		res.json("No hay datos para mostrar.")
 	});
 }
+

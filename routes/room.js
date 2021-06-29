@@ -1,12 +1,12 @@
 module.exports = function(app) {
 
     const room = require('../controllers/ctlRoom.js');
-    app.post  ('/room/',              room.newRoom);
-    app.get   ('/room/',              room.getRooms);
-    app.get   ('/room/:id_cabana',    room.getRoom);
-    app.put   ('/room/:id_cabana',    room.updateRoom);
-    app.delete('/room/:id_cabana',    room.deleteRoom);
-    app.get   ('/room/limit/:val',    room.getRoomsLimit);
-    app.get   ('/room/coincidence/:word',      room.findAMatch);
-    app.get   ('/room/attributes/search/',     room.searchByAttribute);
+    app.post  ('/room/',           room.nuevoRoom);
+    app.get   ('/room/',           room.obtenerRooms);
+    app.get   ('/room/:id_epo',    room.obtenerRoom);
+    app.put   ('/room/:id_epo',    room.actualizarRoom);
+    app.delete('/room/:id_epo',    room.eliminarRoom);
+    app.get   ('/room/limit/:val', room.obtenerRoomsLimit);
+    app.get   ('/room/coincidencia/:palabra', room.buscarCoincidencia);
+    app.get   ('/room/atributos/buscar/',     room.buscarPorAtributo);
 }

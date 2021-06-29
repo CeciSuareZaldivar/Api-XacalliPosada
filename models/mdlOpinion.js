@@ -1,26 +1,26 @@
 module.exports = (sequelize, DataTypes) => {
 	const  Sequelize  = require('sequelize');
 	
-	const Service = sequelize.define('Service',{
-	id_svo:{
+	const Opinion = sequelize.define('Opinion',{
+	id_OPN:{
 		type: DataTypes.UUID,
   		defaultValue: Sequelize.UUIDV4,
 		allowNull: false,
       	unique: true,
 		primaryKey : true
 	},
-	nombre:{
+	cte_id_cte:{
 		type       : DataTypes.STRING,
 		allowNull  : false
 	},
-	costo:{
-	    type       : DataTypes.INTEGER,
-		allowNull  : false
-	},
-	duracion:{
+	texto:{
 	    type       : DataTypes.STRING,
 		allowNull  : false
+	},
+	valoracion:{  
+		type       :  DataTypes.INTEGER,
+		allowNull  : false
 	}
-},{tableName : 'servicios',timestamps: false});
-	return Service;
+},{tableName : 'opinion',timestamps: false});
+	return Opinion;
 }

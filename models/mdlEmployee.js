@@ -2,7 +2,7 @@ module.exports = (sequelize, DataTypes) => {
 	const  Sequelize  = require('sequelize');
 
 	const Employee = sequelize.define('Employee',{
-	id_empleado:{
+	id_epo:{
 		type: DataTypes.UUID,
   		defaultValue: Sequelize.UUIDV4,
 		allowNull: false,
@@ -13,25 +13,21 @@ module.exports = (sequelize, DataTypes) => {
 		type       : DataTypes.STRING,
 		allowNull  : false
 	},
-	apellido       :  DataTypes.STRING,
+	apellido:{
+	    type       : DataTypes.STRING,
+		allowNull  : false
+	},
+	salario:{  
+		type       :  DataTypes.INTEGER,
+		allowNull  : false
+	},
 	telefono:{
 		type       :DataTypes.STRING,
 		allowNull  : false
 	},
-	email          :  DataTypes.STRING,
-	rol:{  
-		type       :  DataTypes.STRING,
-		allowNull  : false
-	},
-	estado:{  
-		type       :  DataTypes.STRING,
-		allowNull  : false
-	},
-	nota           :  DataTypes.STRING,
-	sueldo:{  
-		type       :  DataTypes.INTEGER,
-		allowNull  : false
-	}
-},{tableName : 'empleados',timestamps: false});
-return Employee;
+	comision       :DataTypes.INTEGER,
+	edo_id_edo     :DataTypes.INTEGER
+},{tableName : 'empleado',timestamps: false});
+	Employee.hasOne(Employee,{foreignKey:'id_epo'});
+	return Employee;
 }

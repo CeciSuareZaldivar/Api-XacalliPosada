@@ -2,38 +2,37 @@ const db = require('../config/dbConexion.js');
 const service = db.Service;
 const Op = db.Sequelize.Op;
 
-
-//################  NUEVO SERVICIO #################
+//################  NUEVA service #################
 //Servicio para crear un nuevo registro en la base.
 //POST: http://localhost:3000/service/
-exports.newService = (req, res,next) => {
-	const Srv = service.build(req.body);
-	Srv.save().then(srv => {
-		return res.status(201).json(srv)
+exports.nuevoService = (req, res,next) => {
+	const Serv = service.build(req.body);
+	Serv.save().then(dato => {
+		return res.status(201).json(dato)
 	}).then(next).catch(error => {
-		return res.json("El servicio ya existe")
+		return res.json("El service ya existe")
 	});
 };
 
-//################  OBTIENE SERVICIO ###############
+//################  OBTIENE service ###############
 //Consulta de todos los registros.
 // GET : http://localhost:3000/service/
-exports.getServices = (req, res) => {
-	service.findAll().then(srven => {
-		res.json(srven);
+exports.obtenerServices = (req, res) => {
+	service.findAll().then(dato => {
+		res.json(dato);
 	}).catch(error => {
 		return res.sendStatus(401)
 	})
 };
 
-//################  OBTIENE SERVICIO ###############
+//################  OBTIENE service ###############
 //Consulta por id.
 // GET : http://localhost:3000/service/e001
-exports.getService = (req, res) => {	
-	const id = req.params.id_servicio;
+exports.obtenerService = (req, res) => {	
+	const id = req.params.id_epo;
 	service.findByPk(id).then(service => {
 		if(service===null){
-			return res.json("El id de servicio no existe");
+			return res.json("El id de service no existe");
 		}
 		res.json(service);
 	}).catch(error => {
@@ -42,55 +41,55 @@ exports.getService = (req, res) => {
 };
 
 //##################################################
-//################  ACTUALIZA SERVICIO #############
+//################  ACTUALIZA service #############
 // PUT : http://localhost:3000/service/e001
-exports.updateService = (req, res, next) => {
-	const id = req.params.id_servicio;
-	service.update({ id_servicio   : req.body.id_servicio, 
-					  nombre       : req.body.nombre, 
-                      descripcion  : req.body.descripcion, 
-                      duracion     : req.body.duracion, 
-                      precio       : req.body.precio}, {
-			where: { id_servicio: id }
+exports.actualizarService = (req, res, next) => {
+	const id = req.params.id_epo;
+	service.update({ id_svo      : req.body.id_svo, 
+					  nombre : req.body.nombre, 
+					  costo      : req.body.costo, 
+					  duracion : req.body.duracion,  
+					  age        : req.body.age }, {
+			where: { id_svo: id }
 	}).then(num => {
 		if (num == 1) {
 			res.send({
-				message: "Servicio actualizado satisfactoriamente."
+				message: "service actualizado satisfactoriamente."
 			});
 		} else {
 			res.send({
-				message: `No se puede actualizar el servicio con Id=${id}.`
+				message: `No se puede actualizar el service con Id=${id}.`
 			});
 		}
 	}).catch(err => {
 		res.status(500).send({
-			message: "Error al tratar de actualizar con Id=" + id
+			message: "Error al tratar de actualizar con id=" + id
 		});
 	});
 };
 
-//################  ELIMINA SERVICIO ###############
+//################  ELIMINA service ###############
 //Servicio para eliminar un registro.
 // DELETE : http://localhost:3000/service/e0117
-exports.deleteService = (req, res) => {
-	const id = req.params.id_servicio;
+exports.eliminarService= (req, res) => {
+	const id = req.params.id_epo;
 	if(id === null){
 		return res.json("Mando un campo nulo");
 	}
 	service.findByPk(id).then(service => {
 		service.destroy({
-			where: { id_servicio: id }
+			where: { id_svo: id }
 		}).then(() => {
-			res.status(200).json('Se elimino satisfactoriamente el servicio con Id ' + id);
+			res.status(200).json('Se elimino satisfactoriamente el service con Id ' + id);
 		});
 	}).catch(error => {
-		return res.json("El servicio no existe")
+		return res.json("El service no existe")
 	})
 };
 
 //######### BUSCAR CON LIMIT ###############
 // GET : http://localhost:3000/service/limit/1
-exports.getServicesLimit = (req, res) => {
+exports.obtenerServicesLimit = (req, res) => {
 	const param = req.params.val;
 	const valorparam = parseInt(param,10);
 	if(valorparam === 0){
@@ -109,18 +108,16 @@ exports.getServicesLimit = (req, res) => {
 // nombre. Y esto debe funcionar en general para todos los campos de la base.
 //--------------Falta hacer para los demas cmapos---------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------------------
-exports.findAMatch = (req, res) => {
-	const word = req.params.word;
+exports.buscarCoincidencia = (req, res) => {
+	const palabra = req.params.palabra;
 
 	service.findAll({ where:{
 			[Op.or]: [
-				{ id_servicio: { [Op.like]: `%${word}%` } },
-				{ nombre:     { [Op.like]: `%${word}%` } },
-				{ descripcion:      { [Op.like]: `%${word}%` } },
-				{ duracion:    { [Op.like]: `%${word}%` } },
-				{ precio:    { [Op.like]: `%${word}%` } }
-			]
-		}
+				{ id_svo:   { [Op.like]: `%${palabra}%` } },
+				{ nombre:   { [Op.like]: `%${palabra}%` } },
+				{ costo:    { [Op.like]: `%${palabra}%` } },
+				{ duracion: { [Op.like]: `%${palabra}%` } }
+		]}
 	})
 	.then(data => {
 		if(data !== [])
@@ -136,7 +133,7 @@ exports.findAMatch = (req, res) => {
 // Servicio de consulta por campos, es decir, un servicio que solo regrese los campos
 // que se piden por el usuario.
 
-exports.searchByAttribute = (req, res) => {
+exports.buscarPorAtributo = (req, res) => {
 	const val = req.body.valores;
 	console.log(val)
 

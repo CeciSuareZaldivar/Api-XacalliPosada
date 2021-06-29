@@ -1,64 +1,64 @@
 const db = require('../config/dbConexion.js');
-const room = db.Room;
+const opinion = db.Opinion;
 const Op = db.Sequelize.Op;
 
-//################  NUEVA room #################
+//################  NUEVA OPINION #################
 //Servicio para crear un nuevo registro en la base.
-//POST: http://localhost:3000/room/
-exports.nuevoRoom = (req, res,next) => {
-	const Room = room.build(req.body);
-	Room.save().then(dato => {
+//POST: http://localhost:3000/opinion/
+exports.nuevoOpinion = (req, res,next) => {
+	const Opi = opinion.build(req.body);
+	Opi.save().then(dato => {
 		return res.status(201).json(dato)
 	}).then(next).catch(error => {
-		return res.json("La habitacion ya existe")
+		return res.json("El opinion ya existe")
 	});
 };
 
-//################  OBTIENE room ###############
+//################  OBTIENE OPINION ###############
 //Consulta de todos los registros.
-// GET : http://localhost:3000/room/
-exports.obtenerRooms = (req, res) => {
-	room.findAll().then(dato => {
+// GET : http://localhost:3000/opinion/
+exports.obtenerOpinions = (req, res) => {
+	opinion.findAll().then(dato => {
 		res.json(dato);
 	}).catch(error => {
 		return res.sendStatus(401)
 	})
 };
 
-//################  OBTIENE room ###############
+//################  OBTIENE OPINION ###############
 //Consulta por id.
-// GET : http://localhost:3000/room/e001
-exports.obtenerRoom = (req, res) => {	
+// GET : http://localhost:3000/opinion/e001
+exports.obtenerOpinion = (req, res) => {	
 	const id = req.params.id_epo;
-	room.findByPk(id).then(room => {
-		if(room===null){
-			return res.json("El id de la habitacion no existe");
+	opinion.findByPk(id).then(opinion => {
+		if(opinion===null){
+			return res.json("El id de opinion no existe");
 		}
-		res.json(room);
+		res.json(opinion);
 	}).catch(error => {
 		return res.sendStatus(401)
 	})
 };
 
 //##################################################
-//################  ACTUALIZA room #############
-// PUT : http://localhost:3000/room/e001
-exports.actualizarRoom = (req, res, next) => {
+//################  ACTUALIZA OPINION #############
+// PUT : http://localhost:3000/opinion/e001
+exports.actualizarOpinion = (req, res, next) => {
 	const id = req.params.id_epo;
-	room.update({     id_hbn      : req.body.id_hbn, 
-					  costo : req.body.costo, 
-					  cupo      : req.body.cupo, 
-					  disponibilidad : req.body.disponibilidad,  
+	opinion.update({ id_OPN      : req.body.id_OPN, 
+					  cte_id_cte : req.body.cte_id_cte, 
+					  texto      : req.body.texto, 
+					  valoracion : req.body.valoracion,  
 					  age        : req.body.age }, {
-			where: { id_hbn: id }
+			where: { id_OPN: id }
 	}).then(num => {
 		if (num == 1) {
 			res.send({
-				message: "room actualizado satisfactoriamente."
+				message: "Opinion actualizado satisfactoriamente."
 			});
 		} else {
 			res.send({
-				message: `No se puede actualizar el room con Id=${id}.`
+				message: `No se puede actualizar el opinion con Id=${id}.`
 			});
 		}
 	}).catch(err => {
@@ -68,35 +68,35 @@ exports.actualizarRoom = (req, res, next) => {
 	});
 };
 
-//################  ELIMINA ROOM ###############
+//################  ELIMINA OPINION ###############
 //Servicio para eliminar un registro.
-// DELETE : http://localhost:3000/room/e0117
-exports.eliminarRoom= (req, res) => {
+// DELETE : http://localhost:3000/opinion/e0117
+exports.eliminarOpinion= (req, res) => {
 	const id = req.params.id_epo;
 	if(id === null){
 		return res.json("Mando un campo nulo");
 	}
-	room.findByPk(id).then(room => {
-		room.destroy({
-			where: { id_hbn: id }
+	opinion.findByPk(id).then(opinion => {
+		opinion.destroy({
+			where: { id_OPN: id }
 		}).then(() => {
-			res.status(200).json('Se elimino satisfactoriamente el room con Id ' + id);
+			res.status(200).json('Se elimino satisfactoriamente el opinion con Id ' + id);
 		});
 	}).catch(error => {
-		return res.json("La habitacion no existe")
+		return res.json("El opinion no existe")
 	})
 };
 
 //######### BUSCAR CON LIMIT ###############
-// GET : http://localhost:3000/room/limit/1
-exports.obtenerRoomsLimit = (req, res) => {
+// GET : http://localhost:3000/opinion/limit/1
+exports.obtenerOpinionsLimit = (req, res) => {
 	const param = req.params.val;
 	const valorparam = parseInt(param,10);
 	if(valorparam === 0){
 		return res.json("El valor ingresado no es valido");
 	}else{
-		room.findAll({limit: valorparam}).then(room => {
-			res.json(room);
+		opinion.findAll({limit: valorparam}).then(opinion => {
+			res.json(opinion);
 		}).catch(error => {
 			return res.sendStatus(401)
 		})
@@ -111,12 +111,12 @@ exports.obtenerRoomsLimit = (req, res) => {
 exports.buscarCoincidencia = (req, res) => {
 	const palabra = req.params.palabra;
 
-	room.findAll({ where:{
-			[Op.or]: [    
-				{ id_hbn:         { [Op.like]: `%${palabra}%` } },
-				{ costo:          { [Op.like]: `%${palabra}%` } },
-				{ cupo:           { [Op.like]: `%${palabra}%` } },
-				{ disponibilidad: { [Op.like]: `%${palabra}%` } },
+	opinion.findAll({ where:{
+			[Op.or]: [
+				{ id_OPN:     { [Op.like]: `%${palabra}%` } },
+				{ cte_id_cte: { [Op.like]: `%${palabra}%` } },
+				{ texto:      { [Op.like]: `%${palabra}%` } },
+				{ valoracion: { [Op.like]: `%${palabra}%` } }
 			]
 		}
 	})
@@ -138,7 +138,7 @@ exports.buscarPorAtributo = (req, res) => {
 	const val = req.body.valores;
 	console.log(val)
 
-	room.findAll({ attributes: [...val] })
+	opinion.findAll({ attributes: [...val] })
 	.then(data => {
 		res.json(data);
 	})

@@ -20,14 +20,14 @@ app.use(bodyParser.json());
 const db = require('./config/dbConexion.js');
 
 // app.use('/', require('./routes'));
-require('./routes/client')(app);
 require('./routes/employee')(app);
-require('./routes/lead')(app);
-require('./routes/marketing')(app);
-require('./routes/reservation')(app);
+require('./routes/client')(app);
+require('./routes/opinion')(app);
+
 require('./routes/room')(app);
+require('./routes/roomDetail')(app);
 require('./routes/service')(app);
-require('./routes/supplier')(app);
+require('./routes/serviceDetail')(app);
 
 //cachamos los errores a 404
 app.use(function(req, res, next){
